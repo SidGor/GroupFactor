@@ -57,36 +57,45 @@ def WriteWFactorData(fac_list, start_date = "2010-01-01", end_date = "2018-09-30
     return Maj_Table
 
 
-def DownloadSecData(fac_list, path, trade_date = "20100101", rpt_date = "20100630", stock_list_date = "2018-10-30",
+def GetSecData(fac_list, trade_date = "20100101", rpt_date = "20100630", stock_list_date = "2018-10-30",
                      unit = 1, rptType = 1, currencyType = ""):
       
     # The function downloads Chinese A stock factor data given 
     
     # Still need a module to control variable format
     
-    if len(pd.unique(fac_list)) != len(fac_list):
-        raise ValueError("Duplicate elements in fac_list!")
-    
-    w.start()
-    #test
-    #fac_list = ['wgsd_net_inc','wgsd_assets','wgsd_assets']
-    factors = ",".join(fac_list)
-    O_arguments = "unit=%s;tradeDate=%s;rptDate=%s;rptType=%s;currencyType=%s" % (unit, trade_date,rpt_date,rptType,currencyType)
-    
-    A_Stock_Tickers_Data = w.wset("sectorconstituent","date=%s;sectorid=a001010100000000" % stock_list_date) # Get the tickers of all Chinese A-Stocks
-    A_S_Ticker_t = pd.DataFrame(A_Stock_Tickers_Data.Data, columns = A_Stock_Tickers_Data.Data[1], index = ['DateTime', 'Ticker', 'Name'])
-    
-    P_Ticker_L = list(A_S_Ticker_t.loc['Ticker'])
-    
-    out_data = w.wss(",".join(P_Ticker_L),factors,O_arguments)
-    out_data.Data.append(out_data.Codes)
-    out_table = pd.DataFrame(data = out_data.Data).T
-    out_table.columns = out_data.Fields + ["Ticker"]
-    out_table = out_table[['Ticker'] + out_data.Fields]
-    
+    try:
+        if len(pd.unique(fac_list)) != len(fac_list):
+            raise ValueError("Duplicate elements in fac_list!")
+        
+        
+        w.start()
+        #test
+        #fac_list = ['wgsd_net_inc','wgsd_assets','wgsd_assets']
+        factors = ",".join(fac_list)
+        O_arguments = "unit=%s;tradeDate=%s;rptDate=%s;rptType=%s;currencyType=%s" % (unit, trade_date,rpt_date,rptType,currencyType)
+        
+        A_Stock_Tickers_Data = w.wset("sectorconstituent","date=%s;sectorid=a001010100000000" % stock_list_date) # Get the tickers of all Chinese A-Stocks
+        A_S_Ticker_t = pd.DataFrame(A_Stock_Tickers_Data.Data, columns = A_Stock_Tickers_Data.Data[1], index = ['DateTime', 'Ticker', 'Name'])
+        
+        P_Ticker_L = list(A_S_Ticker_t.loc['Ticker'])
+        
+        out_data = w.wss(",".join(P_Ticker_L),factors,O_arguments)
+        out_data.Data.append(out_data.Codes)
+        out_table = pd.DataFrame(data = out_data.Data).T
+        out_table.columns = out_data.Fields + ["Ticker"]
+        out_table = out_table[['Ticker'] + out_data.Fields]
+    except Exception as e:
+        return e
+        
     return out_table
 
-def GetTradeDates(StartDate, EndDate, DateType):
+def GetTradeDates(StartDate = "2018-09-30", EndDate = "2018-10-30", DateType = ""):
+    
+    try:
+        return w.tdays(StartDate, EndDate, "Period=%s" % DateType).Data    
+    except Exception as e:
+        return e
     
     
     
