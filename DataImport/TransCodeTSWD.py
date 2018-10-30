@@ -30,8 +30,8 @@ def TransCodeT2W(tickers):
     else :
         try:
             converted = [(i[2:8] + "." + i[0:2]) for i in tickers]
-        except:
-            return "Str, list, pd.Series only, cannot convert current object!"
+        except Exception as e:
+            return e
         
     return converted
 
@@ -48,7 +48,7 @@ def TransCodeW2T(tickers):
     else :
         try:
             converted = [(i[7:9] + i[0:6]) for i in tickers]
-        except:
-            return "Str, list, pd.Series only, cannot convert current object!"
+        except Exception as e:
+            return e
         
     return converted

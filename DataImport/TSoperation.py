@@ -21,17 +21,29 @@ import time
 # Please config your account information loccally, first column "Account" sec column "Password"
 # TinySoft python application require local setups, please read LanguageGuide in the TS user console.
 
+def TSreadSingleStock(Ticker, Factor = ["close"], TsAccount = None, TsPassword = None):
 
-acc_f = pd.read_csv("D:/TSaccount.csv")
+    
+    if (TsAccount == None) or (TsPassword == None):
+        
+        try:
+            acc_f = pd.read_csv("D:/TSaccount.csv")
+        except Exception as e:
+            return e
 
-ts.ConnectServer("tsl.tinysoft.com.cn",443) 
+    try:
 
-dl = ts.LoginServer(acc_f.Account[0], acc_f.Password[0]) #Tuple(ErrNo,ErrMsg) Login
-
-
-
-ts.Disconnect()  # Log out.
-
+        ts.ConnectServer("tsl.tinysoft.com.cn",443) 
+        
+        dl = ts.LoginServer(acc_f.Account[0], acc_f.Password[0]) #Tuple(ErrNo,ErrMsg) Login
+        
+        
+        
+        ts.Disconnect()  # Log out.
+        
+        
+    except Exception as e:
+        return e
 # 2. GetData
 
 
