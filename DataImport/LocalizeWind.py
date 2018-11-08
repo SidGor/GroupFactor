@@ -12,9 +12,10 @@ Require local access to Wind Terminal, and key words of data.
 
 from WindPy import *
 import pandas as pd
+import datetime
 
 
-def WriteWFactorData(fac_list, start_date = "2010-01-01", end_date = "2018-09-30", 
+def WriteWFactorData(fac_list, start_date = "2010-01-01", end_date = "2018-09-30", stock_list_date = "2018-10-30",
                      unit = 1, rptType = 1, currencyType = "", Period = "Q", PriceAdj = "B"):
       
     # The function downloads Chinese A stock factor data given 
@@ -24,11 +25,11 @@ def WriteWFactorData(fac_list, start_date = "2010-01-01", end_date = "2018-09-30
     
     w.start()
     #test
-    #fac_list = ['wgsd_net_inc','wgsd_assets','wgsd_assets']
+    #fac_list = ['wgsd_net_inc','ev','wgsd_assets']
     factors = ",".join(fac_list)
     O_arguments = "unit=%s;rptType=%s;currencyType=%s;Period=%s;PriceAdj=%s" % (unit, rptType,currencyType,Period,PriceAdj)
     
-    A_Stock_Tickers_Data = w.wset("sectorconstituent","date=2018-10-30;sectorid=a001010100000000") # Get the tickers of all Chinese A-Stocks
+    A_Stock_Tickers_Data = w.wset("sectorconstituent","date=%s;sectorid=a001010100000000" % stock_list_date) # Get the tickers of all Chinese A-Stocks
     A_S_Ticker_t = pd.DataFrame(A_Stock_Tickers_Data.Data, columns = A_Stock_Tickers_Data.Data[1], index = ['DateTime', 'Ticker', 'Name'])
     
     # Test
@@ -38,6 +39,7 @@ def WriteWFactorData(fac_list, start_date = "2010-01-01", end_date = "2018-09-30
     Maj_Table = pd.DataFrame()
     
     for i in range(0,len(P_Ticker_L)):
+        
         temp_data = w.wsd(P_Ticker_L[i], factors, start_date, end_date, O_arguments)
         temp_data.Data.append(temp_data.Codes * len(temp_data.Data[0]))
         temp_data.Data.append(temp_data.Times)
@@ -55,9 +57,8 @@ def WriteWFactorData(fac_list, start_date = "2010-01-01", end_date = "2018-09-30
     Maj_Table.reset_index(drop = True)
     
     return Maj_Table
-
-
-def GetSecData(fac_list, trade_date = "20100101", rpt_date = "20100630", stock_list_date = "2018-10-30",
+    
+def GetCSData(fac_list, trade_date = "20100101", rpt_date = "20100630", stock_list_date = "2018-10-30",
                      unit = 1, rptType = 1, currencyType = ""):
       
     # The function downloads Chinese A stock factor data given 
@@ -71,7 +72,7 @@ def GetSecData(fac_list, trade_date = "20100101", rpt_date = "20100630", stock_l
         
         w.start()
         #test
-        #fac_list = ['wgsd_net_inc','wgsd_assets','wgsd_assets']
+        #fac_list = ['wgsd_net_inc','wgsd_assets','stm_issuingdate']
         factors = ",".join(fac_list)
         O_arguments = "unit=%s;tradeDate=%s;rptDate=%s;rptType=%s;currencyType=%s" % (unit, trade_date,rpt_date,rptType,currencyType)
         
@@ -93,14 +94,42 @@ def GetSecData(fac_list, trade_date = "20100101", rpt_date = "20100630", stock_l
 def GetTradeDates(StartDate = "2018-09-30", EndDate = "2018-10-30", DateType = ""):
     
     try:
+        w.start()
         return w.tdays(StartDate, EndDate, "Period=%s" % DateType).Data    
     except Exception as e:
         return e
     
+def GetRptDates(year, quarter = 1):
+    
+    if quarter in [1,2,3,4]:
+        try:
+            rptdates = {1:"0331", 2:"0630", 3:"0930", 4:"1231"}
+            Rptdate = str(year) + rptdates[quarter]
+            return Rptdate
+        except Exception as e:
+            return e
+    else:
+        raise ValueError("qurter should be either 1,2,3 or 4")
+        
+def GetWFactorCS(start_date, end_date):
+    #test
+    #Current problem of such function is that data cannot automatically adjust Wind report date to actual 
+    #report date, for example rpt date at 12.30, the actual release date is around 1.30 next year.
+    # This is an unfinished function.
     
     
+    start_date = "2013-12-12"
+    end_date = "2017-12-10"
+    
+    start_date_dt = datetime.datetime.strptime(start_date, "%Y-%m-%d")
+    end_date_dt = datetime.datetime.strptime(end_date, "%Y-%m-%d")
+    
+    start_date_qt = ((start_date_dt.month - 1)//3) + 1
+    end_date_qt = ((start_date_dt.month - 1)//3) + 1
+    s_ele_dates = [GetRptDates(i,j) for i in range(start_date_dt.year, start_date_dt.year + 1) for j in list(range(1,start_date_qt))]
+    rpt_dates = [GetRptDates(i,j) for i in range(start_date_dt.year - 1, end_date_dt.year + 1) for j in [1,2,3,4]] # Have to maintain a longer calendar so as to subset proper data
+    
+    
+    
 
-RData = WriteWFactorData([ "wgsd_net_inc","ev","wgsd_assets"])
 
-
-a = w.wss(",".join(P_Ticker_L),"ev,wgsd_assets,wgsd_net_inc","unit=1;tradeDate=20181029;rptDate=20171231;rptType=1;currencyType=")
