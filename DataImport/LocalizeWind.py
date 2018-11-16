@@ -15,7 +15,7 @@ import pandas as pd
 import datetime
 
 
-def WriteWFactorData(fac_list, start_date = "2010-01-01", end_date = "2018-09-30", stock_list_date = "2018-10-30",
+def WriteWFactorData(fac_list, start_date = "2015-01-01", end_date = "2018-09-30", stock_list_date = "2018-10-30",
                      unit = 1, rptType = 1, currencyType = "", Period = "Q", PriceAdj = "B"):
       
     # The function downloads Chinese A stock factor data given 
@@ -25,7 +25,7 @@ def WriteWFactorData(fac_list, start_date = "2010-01-01", end_date = "2018-09-30
     
     w.start()
     #test
-    #fac_list = ['wgsd_net_inc','ev','wgsd_assets']
+    #fac_list = ['close','ev']
     factors = ",".join(fac_list)
     O_arguments = "unit=%s;rptType=%s;currencyType=%s;Period=%s;PriceAdj=%s" % (unit, rptType,currencyType,Period,PriceAdj)
     
@@ -132,4 +132,4 @@ def GetWFactorCS(start_date, end_date):
     
     
 
-
+Wdata = WriteWFactorData(fac_list, start_date = "2017-01-01")

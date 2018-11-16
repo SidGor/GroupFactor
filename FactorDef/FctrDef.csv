@@ -1,0 +1,6 @@
+FacSymbol,FacName,Definition,Calculation
+MKT,Market,Return of value-weighted market portfolio,Value weighted return of stocks
+SMB,Size,Ret on diversified portfolio of small stocks minus big stocks; Size is market cap;Price times shares outstanding.,Mcap
+HML,Book2Market,Ret on diversified portfolio of high BM stocks minus low BM stocks; Size is market cap;Price times shares outstanding.,
+RMW,Profitability,Ret on stocks with robust and weak profitability,Annual Revenues minus cost of goods sold & interest expense & SG&A|All devided by book equity of previous year
+CMA,Investment,Ret on stocks with low investment and high investment,
