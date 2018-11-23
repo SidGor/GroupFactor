@@ -13,7 +13,7 @@ import seaborn as sns
 
 # test environment
 
-test_data = pd.read_csv("D:/PythonDir/winddata/AS_Mcap20040101_20181113_wkly.csv")
+#test_data = pd.read_csv("D:/PythonDir/winddata/AS_Mcap20040101_20181113_wkly.csv")
 # test_sum = SummaryCSdata(test_data, NAasZero = True)
 
 def SummaryCSdata(dataframe, NAasZero = False):
@@ -46,7 +46,7 @@ def SummaryCSdata(dataframe, NAasZero = False):
         return {'Cdata':dataframe, 'Periods': CountRows, 'MaxStockNum':CountCols, 'Summaries':summaries}
     
 
-test_Cdata = test_sum['Cdata']    
+#test_Cdata = test_sum['Cdata']    
 def CusHisto(DataSeries):
     # What plot is needed and wether to make a stand alone function is yet to determined.
     #DataSeries = test_Cdata
