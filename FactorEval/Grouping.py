@@ -60,10 +60,7 @@ def SglSort(INdataframe, levels = 5, sortMtd = "q", ascending = True):
     if type(dataframe) != pd.DataFrame:
         raise InputError("Pandas dataframe as input only!")
     else:
-            
-        for j in range(0,dataframe.shape[0]):
-            
-            dataframe.iloc[j] = Fsort(dataframe.loc[j], levels = levels, sortMtd = sortMtd, ascending = ascending)
+        dataframe = dataframe.apply(Fsort, axis = 1)    
 #            print("%s row done" % j)        
     return(dataframe)
 
